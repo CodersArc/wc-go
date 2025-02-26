@@ -45,29 +45,32 @@ var rootCmd = &cobra.Command{
 		}
 
 		text := string(content)
+		var results []string
 
 		if countLines {
 			lineCount := strings.Count(text, "\n")
-			fmt.Printf("%d %s\n", lineCount, fileName)
+			results = append(results, fmt.Sprintf("%d", lineCount))
 		}
 
 		if countWords {
 			wordCount := len(strings.Fields(text))
-			fmt.Printf("%d %s\n", wordCount, fileName)
+			results = append(results, fmt.Sprintf("%d", wordCount))
 		}
 
 		if countBytes {
-			fmt.Printf("%d %s\n", len(content), fileName)
+			results = append(results, fmt.Sprintf("%d", len(content)))
 		}
 
 		if countChars {
-			fmt.Printf("%d %s\n", len([]rune(text)), fileName)
+			results = append(results, fmt.Sprintf("%d", len([]rune(text))))
 		}
 
 		if longestLine {
 			longest := findLongestLine(fileName)
-			fmt.Printf("Longest Line (bytes): %d\n", longest)
+			results = append(results, fmt.Sprintf("Longest Line (bytes): %d", longest))
 		}
+
+		fmt.Printf("%s %s\n", strings.Join(results, " "), fileName)
 
 		return nil
 	},
@@ -76,11 +79,12 @@ var rootCmd = &cobra.Command{
 
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
-func Execute() {
+func Execute() error {
 	err := rootCmd.Execute()
 	if err != nil {
-		os.Exit(1)
+		return err
 	}
+	return nil
 }
 
 func init() {
